@@ -4,7 +4,7 @@ import { createStore, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 
 import rootStore, { saga } from './module';
-import Test from './components/Test';
+import Button from './commons/Button';
 
 import './App.css';
 
@@ -16,9 +16,8 @@ const App = () => {
   return (
     <Provider store={store}>
       <div className="App">
-        <Test />
+        <Button>이미지 요청</Button>
       </div>
-      ;
     </Provider>
   );
 };
