@@ -1,5 +1,6 @@
 // import axios from 'axios';
 import { takeLatest, put } from 'redux-saga/effects';
+import * as API from '../api';
 
 const FEEDS_REQUEST = 'FEEDS_REQUEST';
 const FEEDS_SUCCESS = 'FEEDS_SUCCESS';
@@ -8,8 +9,9 @@ const FEEDS_FAILURE = 'FEEDS_FAILURE';
 export const feedsRequest = () => ({
   type: FEEDS_REQUEST,
 });
-const feedsSuccess = () => ({
+const feedsSuccess = (feeds) => ({
   type: FEEDS_SUCCESS,
+  payload: feeds,
 });
 const feedsFailure = () => ({
   type: FEEDS_FAILURE,
@@ -20,12 +22,12 @@ const initialState = {
 };
 
 export const reducer = (state = initialState, action) => {
-  console.log(action.type);
-  switch (action.type) {
+  const { type, payload } = action;
+  switch (type) {
     case FEEDS_REQUEST:
       return state;
     case FEEDS_SUCCESS:
-      return state;
+      return { ...state, feeds: payload };
     case FEEDS_FAILURE:
       return state;
     default:
@@ -33,14 +35,10 @@ export const reducer = (state = initialState, action) => {
   }
 };
 
-function feedsRequestAPI() {
-  //   return axios('');
-}
-
 function* feedsRequestSaga() {
   try {
-    // const result = yield feedsRequestAPI();
-    yield put(feedsSuccess());
+    const { data } = yield API.getList();
+    yield put(feedsSuccess(data.data));
   } catch (error) {
     console.error(error);
     yield put(feedsFailure());

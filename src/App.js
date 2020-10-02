@@ -4,7 +4,7 @@ import { createStore, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 
 import rootStore, { saga } from './module';
-import Test from './components/Test';
+import Gallery from './components/Gallery';
 
 import './App.css';
 
@@ -16,9 +16,8 @@ const App = () => {
   return (
     <Provider store={store}>
       <div className="App">
-        <Test />
+        <Gallery />
       </div>
-      ;
     </Provider>
   );
 };
