@@ -1,36 +1,71 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useCallback, useEffect, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import styled from '@emotion/styled';
+import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry';
+
+import { feedsMoreRequest } from '../module/feed.module';
 
 const StyledPostGridList = styled.section`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  column-gap: 4px;
-  row-gap: 4px;
-  cursor: pointer;
+  font-size: 0;
 
-  & > img {
-    width: calc((100vw - 4px) / 2);
+  & > div {
+    max-width: 1028px;
+    margin: 0 auto;
+  }
+`;
+
+const PostCard = styled.article`
+  width: 100%;
+  img {
+    width: 100%;
+    max-width: 100%;
   }
 `;
 
 const PostGridList = () => {
-  const { feeds } = useSelector(({ reducer }) => reducer);
+  const dispatch = useDispatch();
+  const lastRequestNextUrl = useRef(null);
+  const { feeds, next } = useSelector(({ reducer }) => reducer);
 
   const onClickPostImage = (postUrl) => () => {
     window.open(postUrl, '_blank');
   };
 
+  const onScroll = useCallback(() => {
+    const { clientHeight, scrollHeight } = document.documentElement;
+    if (
+      lastRequestNextUrl.current !== next &&
+      window.scrollY + clientHeight > scrollHeight - 400
+    ) {
+      lastRequestNextUrl.current = next;
+      dispatch(feedsMoreRequest(next));
+    }
+  }, [feeds, next]);
+
+  useEffect(() => {
+    window.addEventListener('scroll', onScroll);
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+    };
+  });
+
   return (
     <StyledPostGridList>
-      {feeds.map((feed) => (
-        <img
-          key={feed.id}
-          src={feed.media_url}
-          alt="instagram post"
-          onClick={onClickPostImage(feed.permalink)}
-        />
-      ))}
+      <ResponsiveMasonry columnsCountBreakPoints={{ 320: 2, 768: 3 }}>
+        <Masonry gutter="4px">
+          {feeds.map((feed) => (
+            <PostCard key={feed.id}>
+              <img
+                key={feed.id}
+                src={feed.media_url}
+                alt="instagram post"
+                onClick={onClickPostImage(feed.permalink)}
+              />
+            </PostCard>
+          ))}
+        </Masonry>
+      </ResponsiveMasonry>
     </StyledPostGridList>
   );
 };
