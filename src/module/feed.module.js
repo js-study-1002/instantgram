@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { takeLatest, put } from 'redux-saga/effects';
 import dotenv from 'dotenv';
-import { saga } from '.';
 
 dotenv.config();
 
