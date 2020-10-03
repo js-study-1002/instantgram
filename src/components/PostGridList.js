@@ -4,16 +4,13 @@ import styled from '@emotion/styled';
 
 const StyledPostGridList = styled.section`
   display: grid;
-  width: 1000px;
-  margin: 0 auto;
-  grid-template-columns: 300px 300px 300px;
-  column-gap: 50px;
-  row-gap: 50px;
-  margin-top: 40px;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 4px;
+  row-gap: 4px;
   cursor: pointer;
 
   & > img {
-    width: 300px;
+    width: calc((100vw - 4px) / 2);
   }
 `;
 
