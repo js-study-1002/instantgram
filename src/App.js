@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
+import styled from '@emotion/styled';
 import { useDispatch } from 'react-redux';
 
 import PostGridList from './components/PostGridList';
+import Header from './components/Header';
 import { feedsRequest } from './module/feed.module';
 
 const App = () => {
@@ -11,10 +13,15 @@ const App = () => {
   }, [dispatch]);
 
   return (
-    <div className="App">
+    <Layout className="App">
+      <Header />
       <PostGridList />
-    </div>
+    </Layout>
   );
 };
+
+const Layout = styled.div`
+  padding: 56px 0 0 0;
+`;
 
 export default App;
