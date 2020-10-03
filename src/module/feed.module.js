@@ -67,7 +67,7 @@ export const reducer = (state = initialState, action) => {
     case FEEDS_MORE_FAILURE:
       return { ...state, feedsLoading: false };
     default:
-      return { ...state };
+      return state;
   }
 };
 
