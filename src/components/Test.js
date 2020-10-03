@@ -6,7 +6,8 @@ const Test = () => {
   const dispatch = useDispatch();
 
   const onClick = () => {
-    dispatch(feedsRequest());
+    const result = dispatch(feedsRequest());
+    console.log('여기', result)
   };
 
   return (

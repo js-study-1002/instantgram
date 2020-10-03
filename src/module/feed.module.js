@@ -1,15 +1,25 @@
-// import axios from 'axios';
-import { takeLatest, put } from 'redux-saga/effects';
+import axios from 'axios';
+import { takeLatest, put, call } from 'redux-saga/effects';
 
 const FEEDS_REQUEST = 'FEEDS_REQUEST';
 const FEEDS_SUCCESS = 'FEEDS_SUCCESS';
 const FEEDS_FAILURE = 'FEEDS_FAILURE';
 
-export const feedsRequest = () => ({
+export const feedsRequest = (fields, access_token) => ({
   type: FEEDS_REQUEST,
+  fields,
+  access_token,
 });
-const feedsSuccess = () => ({
+
+export const feedRequest = () => ({
+  
+});
+
+const feedsSuccess = result => ({
   type: FEEDS_SUCCESS,
+  payload: {
+    feeds: result.data,
+  }
 });
 const feedsFailure = () => ({
   type: FEEDS_FAILURE,
@@ -17,15 +27,22 @@ const feedsFailure = () => ({
 
 const initialState = {
   feeds: [],
+  paging: {
+    before: '',
+    after: '',
+  }
 };
 
-export const reducer = (state = initialState, action) => {
-  console.log(action.type);
-  switch (action.type) {
+export const feedReducer = (state = initialState, action) => {
+  const { type, payload} = action;
+  switch (type) {
     case FEEDS_REQUEST:
       return state;
     case FEEDS_SUCCESS:
-      return state;
+      return state = {
+        ...state,
+        feeds: payload.feeds,
+      };
     case FEEDS_FAILURE:
       return state;
     default:
@@ -34,13 +51,14 @@ export const reducer = (state = initialState, action) => {
 };
 
 function feedsRequestAPI() {
-  //   return axios('');
+  return axios('https://graph.instagram.com/me/media?fields=id,media_type,media_url,permalink&access_token=IGQVJWSFJkTDl3RXptRk5XMEhCOUkwQndMTDBJS3hwbWVpYWhlVEI5ck1XT0dULWE1NEZAreUJnQ3dIdGlWZAFNXMkRUYmhPNXhKYXA5c2JjeVp3aFljYVhncXhhc1lQOU5ud093cmpqZAmp4SlF5czNCbQZDZD');
 }
 
-function* feedsRequestSaga() {
+function* feedsRequestSaga(action) {
+  const accessToken = action.payload;
   try {
-    // const result = yield feedsRequestAPI();
-    yield put(feedsSuccess());
+    const result = yield call(feedsRequestAPI, accessToken);
+    yield put(feedsSuccess(result.data));
   } catch (error) {
     console.error(error);
     yield put(feedsFailure());
