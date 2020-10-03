@@ -1,6 +1,8 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useCallback, useEffect, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import styled from '@emotion/styled';
+
+import { feedsMoreRequest } from '../module/feed.module';
 
 const StyledPostGridList = styled.section`
   display: grid;
@@ -15,11 +17,32 @@ const StyledPostGridList = styled.section`
 `;
 
 const PostGridList = () => {
-  const { feeds } = useSelector(({ reducer }) => reducer);
+  const dispatch = useDispatch();
+  const lastRequestNextUrl = useRef(null);
+  const { feeds, next } = useSelector(({ reducer }) => reducer);
 
   const onClickPostImage = (postUrl) => () => {
     window.open(postUrl, '_blank');
   };
+
+  const onScroll = useCallback(() => {
+    const { clientHeight, scrollHeight } = document.documentElement;
+    if (
+      lastRequestNextUrl.current !== next &&
+      window.scrollY + clientHeight > scrollHeight - 400
+    ) {
+      lastRequestNextUrl.current = next;
+      dispatch(feedsMoreRequest(next));
+    }
+  }, [feeds, next]);
+
+  useEffect(() => {
+    window.addEventListener('scroll', onScroll);
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+    };
+  });
 
   return (
     <StyledPostGridList>

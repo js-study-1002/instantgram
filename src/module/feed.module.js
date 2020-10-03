@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { takeLatest, put } from 'redux-saga/effects';
 import dotenv from 'dotenv';
+import { saga } from '.';
 
 dotenv.config();
 
@@ -13,19 +14,38 @@ const FEEDS_REQUEST = 'FEEDS_REQUEST';
 const FEEDS_SUCCESS = 'FEEDS_SUCCESS';
 const FEEDS_FAILURE = 'FEEDS_FAILURE';
 
+const FEEDS_MORE_REQUEST = 'FEEDS_MORE_REQUEST';
+const FEEDS_MORE_SUCCESS = 'FEEDS_MORE_SUCCESS';
+const FEEDS_MORE_FAILURE = 'FEEDS_MORE_FAILURE';
+
 export const feedsRequest = () => ({
   type: FEEDS_REQUEST,
 });
-const feedsSuccess = (data) => ({
+const feedsSuccess = (data, next) => ({
   type: FEEDS_SUCCESS,
   data,
+  next,
 });
 const feedsFailure = () => ({
   type: FEEDS_FAILURE,
 });
 
+export const feedsMoreRequest = (next) => ({
+  type: FEEDS_MORE_REQUEST,
+  next,
+});
+const feedsMoreSuccess = (data, next) => ({
+  type: FEEDS_MORE_SUCCESS,
+  data,
+  next,
+});
+const feedsMoreFailure = () => ({
+  type: FEEDS_MORE_FAILURE,
+});
+
 const initialState = {
   feeds: [],
+  next: null,
 };
 
 export const reducer = (state = initialState, action) => {
@@ -33,8 +53,17 @@ export const reducer = (state = initialState, action) => {
     case FEEDS_REQUEST:
       return { ...state };
     case FEEDS_SUCCESS:
-      return { ...state, feeds: action.data };
+      return { feeds: action.data, next: action.next };
     case FEEDS_FAILURE:
+      return { ...state };
+    case FEEDS_MORE_REQUEST:
+      return { ...state };
+    case FEEDS_MORE_SUCCESS:
+      return {
+        feeds: [...state.feeds, ...action.data],
+        next: action.next,
+      };
+    case FEEDS_MORE_FAILURE:
       return { ...state };
     default:
       return { ...state };
@@ -48,9 +77,9 @@ function feedsRequestAPI() {
 function* feedsRequestSaga() {
   try {
     const {
-      data: { data },
+      data: { data, paging },
     } = yield feedsRequestAPI();
-    yield put(feedsSuccess(data));
+    yield put(feedsSuccess(data, paging.next));
   } catch (error) {
     console.error(error);
     yield put(feedsFailure());
@@ -59,4 +88,24 @@ function* feedsRequestSaga() {
 
 export function* watchFeedsRequest() {
   yield takeLatest(FEEDS_REQUEST, feedsRequestSaga);
+}
+
+function feedsMoreRequestAPI(nextUrl) {
+  return axios.get(nextUrl);
+}
+
+function* feedsMoreRequestSaga(action) {
+  try {
+    const {
+      data: { data, paging },
+    } = yield feedsMoreRequestAPI(action.next);
+    yield put(feedsMoreSuccess(data, paging.next));
+  } catch (error) {
+    console.error(error);
+    yield put(feedsMoreFailure());
+  }
+}
+
+export function* watchFeedsMoreRequest() {
+  yield takeLatest(FEEDS_MORE_REQUEST, feedsMoreRequestSaga);
 }
