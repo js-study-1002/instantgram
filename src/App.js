@@ -1,13 +1,16 @@
 import React, { useEffect } from 'react';
 import styled from '@emotion/styled';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import PostGridList from './components/PostGridList';
 import Header from './components/Header';
+import AsideDrawer from './components/AsideDrawer';
 import { feedsRequest } from './module/feed.module';
 
 const App = () => {
   const dispatch = useDispatch();
+  const { isDrawerOpen } = useSelector(({ uiReducer }) => uiReducer);
+  
   useEffect(() => {
     dispatch(feedsRequest());
   }, [dispatch]);
@@ -15,6 +18,7 @@ const App = () => {
   return (
     <Layout className="App">
       <Header />
+      {isDrawerOpen && <AsideDrawer />}
       <PostGridList />
     </Layout>
   );
