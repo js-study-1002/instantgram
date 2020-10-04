@@ -7,7 +7,7 @@ dotenv.config();
 const { REACT_APP_ACCESS_TOKEN } = process.env;
 
 const MY_MEDIA_URL =
-  'https://graph.instagram.com/me/media?fields=id,media_url,permalink&access_token=';
+  'https://graph.instagram.com/me/media?fields=id,media_url,permalink,username,thumbnail_url,caption,media_type&access_token=';
 
 const FEEDS_REQUEST = 'FEEDS_REQUEST';
 const FEEDS_SUCCESS = 'FEEDS_SUCCESS';

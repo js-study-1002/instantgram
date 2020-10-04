@@ -68,7 +68,7 @@ const PostGridList = () => {
               <PostCard key={feed.id}>
                 <img
                   key={feed.id}
-                  src={feed.media_url}
+                  src={feed.thumbnail_url || feed.media_url}
                   alt="instagram post"
                   onClick={onClickPostImage(feed.permalink)}
                   onLoad={loadFeedsHandler}
