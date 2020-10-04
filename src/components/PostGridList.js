@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry';
 
 import { feedsMoreRequest } from '../module/feed.module';
+import BottomLoading from './Loading/BottomLoading';
 
 const StyledPostGridList = styled.section`
   font-size: 0;
@@ -25,7 +26,7 @@ const PostCard = styled.article`
 const PostGridList = () => {
   const dispatch = useDispatch();
   const lastRequestNextUrl = useRef(null);
-  const { feeds, next } = useSelector(({ reducer }) => reducer);
+  const { feeds, next, feedsLoading } = useSelector(({ reducer }) => reducer);
 
   const onClickPostImage = (postUrl) => () => {
     window.open(postUrl, '_blank');
@@ -40,7 +41,7 @@ const PostGridList = () => {
       lastRequestNextUrl.current = next;
       dispatch(feedsMoreRequest(next));
     }
-  }, [feeds, next]);
+  }, [next, dispatch]);
 
   useEffect(() => {
     window.addEventListener('scroll', onScroll);
@@ -66,6 +67,7 @@ const PostGridList = () => {
           ))}
         </Masonry>
       </ResponsiveMasonry>
+      {feeds.length && feedsLoading && <BottomLoading />}
     </StyledPostGridList>
   );
 };
