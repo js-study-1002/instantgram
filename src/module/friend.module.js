@@ -27,7 +27,7 @@ const friendsFailure = () => ({
 });
 
 const initialState = {
-  friends: [],
+  list: [],
 };
 
 export const reducer = (state = initialState, action) => {
@@ -35,7 +35,7 @@ export const reducer = (state = initialState, action) => {
     case FRIENDS_REQUEST:
       return state;
     case FRIENDS_SUCCESS:
-      return { ...state, friends: action.data };
+      return { ...state, list: action.data };
     case FRIENDS_FAILURE:
       return state;
     default:
@@ -45,9 +45,7 @@ export const reducer = (state = initialState, action) => {
 
 function* friendsRequestSaga() {
   try {
-    const {
-      data: { data },
-    } = yield friendsRequestAPI();
+    const { data } = yield friendsRequestAPI();
     yield put(friendsSuccess(data));
   } catch (error) {
     console.error(error);

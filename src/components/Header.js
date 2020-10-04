@@ -10,7 +10,6 @@ const StyledHeader = styled.header`
   top: 0;
   height: 56px;
   width: 100%;
-  background-color: red;
 `;
 
 const Header = () => {
@@ -19,6 +18,6 @@ const Header = () => {
       <AsideButton />
     </StyledHeader>
   );
-}
+};
 
 export default Header;
