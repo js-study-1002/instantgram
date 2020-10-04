@@ -58,7 +58,7 @@ const AsideDrawer = () => {
       dispatch(feedsRequest(token));
       dispatch(drawerOpen());
     },
-    [list, dispatch],
+    [dispatch],
   );
 
   return (
