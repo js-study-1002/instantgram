@@ -1,6 +1,9 @@
 import React, { useCallback } from 'react';
 import styled from '@emotion/styled';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+
+import { feedsRequest } from '../module/feed.module';
+import { drawerOpen } from '../module/ui.module';
 
 const StyledAsideDrawer = styled.div`
   position: fixed;
@@ -25,7 +28,7 @@ const Group = styled.ul`
   }
 `;
 
-const Menu = styled.li`
+const GroupMenu = styled.li`
   width: auto;
   margin-left: 16px;
   cursor: pointer;
@@ -34,23 +37,42 @@ const Menu = styled.li`
   }
 `;
 
+const Menu = styled.button`
+  color: white;
+  background-color: transparent;
+  outline: none;
+  border: none;
+  font-size: 18px;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+`;
+
 const AsideDrawer = () => {
   const { isDrawerOpen } = useSelector(({ ui }) => ui);
   const { list } = useSelector(({ friend }) => friend);
+  const dispatch = useDispatch();
 
-  const handleClickFriend = useCallback(() => {}, [list]);
+  const handleClickFriend = useCallback(
+    (token) => {
+      dispatch(feedsRequest(token));
+      dispatch(drawerOpen());
+    },
+    [list, dispatch],
+  );
 
   return (
     <StyledAsideDrawer isOpen={isDrawerOpen}>
+      <Menu onClick={() => handleClickFriend()}>나</Menu>
       <Group>
         <p>친구</p>
         {list.map((friend) => (
-          <Menu
+          <GroupMenu
             key={friend.username}
             onClick={() => handleClickFriend(friend.token)}
           >
             {friend.username}
-          </Menu>
+          </GroupMenu>
         ))}
       </Group>
     </StyledAsideDrawer>
