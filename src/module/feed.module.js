@@ -44,26 +44,28 @@ const feedsMoreFailure = () => ({
 
 const initialState = {
   feeds: [],
+  feedsLoading: false,
   next: null,
 };
 
 export const reducer = (state = initialState, action) => {
   switch (action.type) {
     case FEEDS_REQUEST:
-      return { ...state };
+      return { ...state, feedsLoading: true };
     case FEEDS_SUCCESS:
-      return { feeds: action.data, next: action.next };
+      return { feeds: action.data, next: action.next, feedsLoading: false };
     case FEEDS_FAILURE:
-      return { ...state };
+      return { ...state, feedsLoading: false };
     case FEEDS_MORE_REQUEST:
-      return { ...state };
+      return { ...state, feedsLoading: true };
     case FEEDS_MORE_SUCCESS:
       return {
         feeds: [...state.feeds, ...action.data],
         next: action.next,
+        feedsLoading: false,
       };
     case FEEDS_MORE_FAILURE:
-      return { ...state };
+      return { ...state, feedsLoading: false };
     default:
       return { ...state };
   }

@@ -1,9 +1,11 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from '@emotion/styled';
 import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry';
 
 import { feedsMoreRequest } from '../module/feed.module';
+import DisplayLoading from './Loading/DisplayLoading';
+import BottomLoading from './Loading/BottomLoading';
 
 const StyledPostGridList = styled.section`
   font-size: 0;
@@ -22,10 +24,13 @@ const PostCard = styled.article`
   }
 `;
 
+const INIT_LOAD_FEEDS_COUNT = 25;
+
 const PostGridList = () => {
   const dispatch = useDispatch();
   const lastRequestNextUrl = useRef(null);
-  const { feeds, next } = useSelector(({ reducer }) => reducer);
+  const { feeds, next, feedsLoading } = useSelector(({ reducer }) => reducer);
+  const [loadFeedsCount, setLoadFeedsCount] = useState(0);
 
   const onClickPostImage = (postUrl) => () => {
     window.open(postUrl, '_blank');
@@ -40,7 +45,11 @@ const PostGridList = () => {
       lastRequestNextUrl.current = next;
       dispatch(feedsMoreRequest(next));
     }
-  }, [feeds, next]);
+  }, [next, dispatch]);
+
+  const loadFeedsHandler = useCallback(() => {
+    setLoadFeedsCount(loadFeedsCount + 1);
+  }, [loadFeedsCount]);
 
   useEffect(() => {
     window.addEventListener('scroll', onScroll);
@@ -51,22 +60,29 @@ const PostGridList = () => {
   });
 
   return (
-    <StyledPostGridList>
-      <ResponsiveMasonry columnsCountBreakPoints={{ 320: 2, 768: 3 }}>
-        <Masonry gutter="4px">
-          {feeds.map((feed) => (
-            <PostCard key={feed.id}>
-              <img
-                key={feed.id}
-                src={feed.media_url}
-                alt="instagram post"
-                onClick={onClickPostImage(feed.permalink)}
-              />
-            </PostCard>
-          ))}
-        </Masonry>
-      </ResponsiveMasonry>
-    </StyledPostGridList>
+    <>
+      <StyledPostGridList>
+        <ResponsiveMasonry columnsCountBreakPoints={{ 320: 2, 768: 3 }}>
+          <Masonry gutter="4px">
+            {feeds.map((feed) => (
+              <PostCard key={feed.id}>
+                <img
+                  key={feed.id}
+                  src={feed.media_url}
+                  alt="instagram post"
+                  onClick={onClickPostImage(feed.permalink)}
+                  onLoad={loadFeedsHandler}
+                />
+              </PostCard>
+            ))}
+          </Masonry>
+        </ResponsiveMasonry>
+        {feeds.length && feedsLoading && <BottomLoading />}
+      </StyledPostGridList>
+      {!feeds.length && feeds.length !== INIT_LOAD_FEEDS_COUNT && (
+        <DisplayLoading />
+      )}
+    </>
   );
 };
 
