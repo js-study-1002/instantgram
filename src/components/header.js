@@ -1,13 +1,6 @@
-/** @jsx jsx */
-import { jsx } from '@emotion/core';
+import React from 'react';
 import styled from '@emotion/styled';
 import AsideButton from './AsideButton';
-
-export default function Header() {
-  return <StyledHeader>
-    <AsideButton />
-  </StyledHeader>;
-}
 
 const StyledHeader = styled.header`
   position: fixed;
@@ -19,3 +12,13 @@ const StyledHeader = styled.header`
   width: 100%;
   background-color: red;
 `;
+
+const Header = () => {
+  return (
+    <StyledHeader>
+      <AsideButton />
+    </StyledHeader>
+  );
+}
+
+export default Header;
