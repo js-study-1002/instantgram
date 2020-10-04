@@ -17,8 +17,9 @@ const FEEDS_MORE_REQUEST = 'FEEDS_MORE_REQUEST';
 const FEEDS_MORE_SUCCESS = 'FEEDS_MORE_SUCCESS';
 const FEEDS_MORE_FAILURE = 'FEEDS_MORE_FAILURE';
 
-export const feedsRequest = () => ({
+export const feedsRequest = (token) => ({
   type: FEEDS_REQUEST,
+  token,
 });
 const feedsSuccess = (data, next) => ({
   type: FEEDS_SUCCESS,
@@ -51,7 +52,7 @@ const initialState = {
 export const reducer = (state = initialState, action) => {
   switch (action.type) {
     case FEEDS_REQUEST:
-      return { ...state, feedsLoading: true };
+      return { ...state, feedsLoading: true, token: action.token };
     case FEEDS_SUCCESS:
       return { feeds: action.data, next: action.next, feedsLoading: false };
     case FEEDS_FAILURE:
@@ -67,19 +68,19 @@ export const reducer = (state = initialState, action) => {
     case FEEDS_MORE_FAILURE:
       return { ...state, feedsLoading: false };
     default:
-      return { ...state };
+      return state;
   }
 };
 
-function feedsRequestAPI() {
-  return axios.get(`${MY_MEDIA_URL}${REACT_APP_ACCESS_TOKEN}`);
+function feedsRequestAPI(token = REACT_APP_ACCESS_TOKEN) {
+  return axios.get(`${MY_MEDIA_URL}${token}`);
 }
 
-function* feedsRequestSaga() {
+function* feedsRequestSaga({ token }) {
   try {
     const {
       data: { data, paging },
-    } = yield feedsRequestAPI();
+    } = yield feedsRequestAPI(token);
     yield put(feedsSuccess(data, paging.next));
   } catch (error) {
     console.error(error);

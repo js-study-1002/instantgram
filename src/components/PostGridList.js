@@ -29,7 +29,7 @@ const INIT_LOAD_FEEDS_COUNT = 25;
 const PostGridList = () => {
   const dispatch = useDispatch();
   const lastRequestNextUrl = useRef(null);
-  const { feeds, next, feedsLoading } = useSelector(({ reducer }) => reducer);
+  const { feeds, next, feedsLoading } = useSelector(({ feed }) => feed);
   const [loadFeedsCount, setLoadFeedsCount] = useState(0);
 
   const onClickPostImage = (postUrl) => () => {

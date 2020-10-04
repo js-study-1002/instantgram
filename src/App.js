@@ -6,12 +6,14 @@ import PostGridList from './components/PostGridList';
 import Header from './components/Header';
 import AsideDrawer from './components/AsideDrawer';
 import { feedsRequest } from './module/feed.module';
+import { friendsRequest } from './module/friend.module';
 
 const App = () => {
   const dispatch = useDispatch();
   
   useEffect(() => {
     dispatch(feedsRequest());
+    dispatch(friendsRequest());
   }, [dispatch]);
 
   return (
