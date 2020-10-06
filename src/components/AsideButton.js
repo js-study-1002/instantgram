@@ -3,16 +3,13 @@ import styled from '@emotion/styled';
 import { useDispatch } from 'react-redux';
 
 import Button from '../commons/Button';
-import menu from '../assets/menu.svg';
+import Icon, { types, sizes } from './Icon';
 import { drawerOpen } from '../module/ui.module';
 
 const StyledAsideButton = styled(Button)`
   padding: 0 15px;
   background-color: transparent;
-`;
-
-const StyledAsideImg = styled.img`
-  width: 30px;
+  color: #555;
 `;
 
 const AsideButton = () => {
@@ -24,7 +21,7 @@ const AsideButton = () => {
 
   return (
     <StyledAsideButton onClick={onClick}>
-      <StyledAsideImg src={menu} />
+      <Icon icon={types.menu} size={sizes.Huge} />
     </StyledAsideButton>
   );
 };
